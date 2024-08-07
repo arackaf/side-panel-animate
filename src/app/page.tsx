@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { FC, useLayoutEffect, useRef, useState } from "react";
 
 const data = [
   { name: "Taylor Swift", streams: 400_000 },
@@ -13,21 +13,22 @@ export function useWidth() {
   const ref = useRef<any>();
   const [width, set] = useState(0);
   const widthRef = useRef(width);
-  const [ro] = useState(
-    () =>
-      new ResizeObserver(packet => {
-        if (ref.current && widthRef.current != ref.current.offsetWidth) {
-          widthRef.current = ref.current.offsetWidth;
-          set(ref.current.offsetWidth);
-        }
-      })
+  const [ro] = useState(() =>
+    typeof window === "object"
+      ? new ResizeObserver(packet => {
+          if (ref.current && widthRef.current != ref.current.offsetWidth) {
+            widthRef.current = ref.current.offsetWidth;
+            set(ref.current.offsetWidth);
+          }
+        })
+      : null
   );
   useLayoutEffect(() => {
     if (ref.current) {
       set(ref.current.offsetWidth);
-      ro.observe(ref.current, {});
+      ro!.observe(ref.current, {});
     }
-    return () => ro.disconnect();
+    return () => ro!.disconnect();
   }, [ref.current]);
 
   return [ref, width as any];
@@ -44,6 +45,7 @@ export default function Home() {
   function toggle() {
     setSidePanelOpen(val => !val);
   }
+
   return (
     <main className="p-8">
       <h1>Hello</h1>
@@ -90,24 +92,10 @@ export default function Home() {
                           <option>View Albums</option>
                         </select>
                       </td>
-                      <td className="p-0">
-                        <div
-                          className="overflow-hidden"
-                          style={{
-                            width: sidePanelOpen ? 0 : "213px",
-                            transition: "width 200ms ease-in",
-                          }}
-                        >
-                          <div>
-                            <button
-                              onClick={toggle}
-                              className="border p-4 text-nowrap"
-                            >
-                              View Release Checklist
-                            </button>
-                          </div>
-                        </div>
-                      </td>
+                      <ViewChecklist
+                        sidePanelOpen={sidePanelOpen}
+                        toggle={toggle}
+                      />
                     </tr>
                   ))}
                 </tbody>
@@ -130,3 +118,29 @@ export default function Home() {
     </main>
   );
 }
+
+const ViewChecklist: FC<{ sidePanelOpen: boolean; toggle: any }> = props => {
+  const { sidePanelOpen, toggle } = props;
+  const [sizingRef, width] = useWidth();
+  const widthToUse = width ? `${width}px` : "auto";
+
+  console.log({ width });
+
+  return (
+    <td className="p-0">
+      <div
+        className="overflow-hidden"
+        style={{
+          width: sidePanelOpen ? 0 : widthToUse,
+          transition: "width 200ms ease-in",
+        }}
+      >
+        <div ref={sizingRef}>
+          <button onClick={toggle} className="border p-4 text-nowrap">
+            View Release Checklist
+          </button>
+        </div>
+      </div>
+    </td>
+  );
+};
