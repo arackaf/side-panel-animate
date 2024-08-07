@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 const data = [
   { name: "Taylor Swift", streams: 400_000 },
   { name: "Lake Street Dive", streams: 250_000 },
@@ -8,6 +10,10 @@ const data = [
 ];
 
 export default function Home() {
+  const [sidePanelOpen, setSidePanelOpen] = useState(false);
+
+  //1728 335
+  const gridCols = sidePanelOpen ? "calc(100% - 335px) 1fr" : "100% 1fr";
   return (
     <main className="p-8">
       <h1>Hello</h1>
@@ -15,7 +21,7 @@ export default function Home() {
       <div className="flex flex-col gap-3">
         <div className="bg-slate-500 p-24">Filters and such</div>
         <div className="">
-          <div className="grid grid-cols-[100%_1fr] overflow-hidden" style={{ transition: "grid-template-cols 200ms ease-in" }}>
+          <div className={`grid overflow-hidden`} style={{ gridTemplateColumns: gridCols, transition: "grid-template-columns 200ms ease-in" }}>
             <div className="">
               <table cellPadding="15">
                 <thead>
@@ -28,8 +34,8 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((d) => (
-                    <tr>
+                  {data.map((d, idx) => (
+                    <tr key={idx}>
                       <td>{d.name}</td>
                       <td>{d.streams}</td>
                       <td>
@@ -42,14 +48,16 @@ export default function Home() {
                         </select>
                       </td>
                       <td>
-                        <button className="border p-4">View Release Checklist</button>
+                        <button onClick={() => setSidePanelOpen((val) => !val)} className="border p-4">
+                          View Release Checklist
+                        </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <div className="p-10">
+            <div className="p-36 bg-teal-500">
               <h1 className="text-lg  ">Side Panel</h1>
             </div>
           </div>
