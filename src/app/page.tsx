@@ -129,16 +129,18 @@ const ViewChecklist: FC<{ sidePanelOpen: boolean; toggle: any }> = props => {
   return (
     <td className="p-0">
       <div
-        className="overflow-hidden"
+        className="overflow-hidden flex"
         style={{
           width: sidePanelOpen ? 0 : widthToUse,
           transition: "width 200ms ease-in",
         }}
       >
         <div ref={sizingRef}>
-          <button onClick={toggle} className="border p-4 text-nowrap">
-            View Release Checklist
-          </button>
+          <div>
+            <button onClick={toggle} className="border p-4 text-nowrap">
+              View Release Checklist
+            </button>
+          </div>
         </div>
       </div>
     </td>
