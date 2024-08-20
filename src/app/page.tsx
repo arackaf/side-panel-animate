@@ -9,7 +9,7 @@ const data = [
   { name: "Grace Potter", streams: 700_000 },
 ];
 
-export function useWidth() {
+function useWidth() {
   const ref = useRef<any>();
   const [width, set] = useState(0);
   const widthRef = useRef(width);
